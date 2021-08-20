@@ -6,7 +6,7 @@ authors = ["Neon K.I.D <contact@neonkid.xyz>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-SQLAlchemy = "^1.4.22"
+SQLAlchemy = "1.4.22"
 
 [tool.poetry.dev-dependencies]
 

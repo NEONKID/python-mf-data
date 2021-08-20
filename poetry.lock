@@ -43,7 +43,7 @@ sqlcipher = ["sqlcipher3-binary"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "a6d780dae24b34d47229988ea04cd6036095e9a23bfb496218c2287216ed172e"
+content-hash = "c3286734dd5ef0c7cc5ce395c9bbe3701d554cb7f6ef8e667c3fdfc495fc31d6"
 
 [metadata.files]
 greenlet = [
