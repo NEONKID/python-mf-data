@@ -1,3 +1,4 @@
+from asyncio import current_task
 from contextlib import asynccontextmanager, contextmanager
 from typing import AsyncIterator, Callable, Iterator, Union
 
@@ -22,7 +23,8 @@ class AsyncSQLAlchemy:
     async def connect(self):
         self._engine = create_async_engine(self._db_uri, echo=True)
         self._session_factory = async_scoped_session(
-            sessionmaker(autocommit=False, autoflush=False, bind=self._engine, class_=AsyncSession))
+            sessionmaker(autocommit=False, autoflush=False, bind=self._engine, class_=AsyncSession),
+            scopefunc=current_task)
 
     async def disconnect(self):
         await self._engine.dispose()
