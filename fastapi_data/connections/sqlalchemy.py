@@ -1,5 +1,5 @@
-from contextlib import asynccontextmanager, AbstractAsyncContextManager, AbstractContextManager, contextmanager
-from typing import Callable, Union
+from contextlib import asynccontextmanager, contextmanager
+from typing import AsyncIterator, Callable, Iterator, Union
 
 from sqlalchemy.engine import Engine, create_engine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_scoped_session, create_async_engine
@@ -28,7 +28,7 @@ class AsyncSQLAlchemy:
         await self._engine.dispose()
 
     @asynccontextmanager
-    async def session(self) -> Callable[..., AbstractAsyncContextManager[AsyncSession]]:
+    async def session(self) -> Callable[..., AsyncIterator[AsyncSession]]:
         session: AsyncSession = self._session_factory()
         try:
             yield session
@@ -56,7 +56,7 @@ class SyncSQLAlchemy:
         self._engine.dispose()
 
     @contextmanager
-    def session(self) -> Callable[..., AbstractContextManager[Session]]:
+    def session(self) -> Callable[..., Iterator[Session]]:
         session: Session = self._session_factory()
         try:
             yield session
