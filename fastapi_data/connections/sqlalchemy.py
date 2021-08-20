@@ -61,7 +61,7 @@ class SyncSQLAlchemy:
         try:
             yield session
         except Exception:
-            await session.rollback()
+            session.rollback()
             raise
         finally:
-            await session.close()
+            session.close()
