@@ -1,4 +1,4 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from contextlib import AbstractAsyncContextManager, AbstractContextManager
 from typing import Callable, final, Iterator, Type, TypeVar
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,7 +12,7 @@ from fastapi_data.errors import NotFoundException
 ModelType = TypeVar("ModelType", bound=Base)
 
 
-class AsyncRepository(metaclass=ABCMeta):
+class AsyncRepository(ABC):
     def __init__(self, model: Type[ModelType], session_factory: Callable[..., AbstractAsyncContextManager]) -> None:
         self.model = model
         self._session_factory = session_factory
@@ -62,7 +62,7 @@ class AsyncRepository(metaclass=ABCMeta):
             await session.commit()
 
 
-class SyncRepository:
+class SyncRepository(ABC):
     def __init__(self, model: Type[ModelType], session_factory: Callable[..., AbstractContextManager]) -> None:
         self.model = model
         self._session_factory = session_factory
