@@ -6,8 +6,8 @@ from sqlalchemy.future import select
 from sqlalchemy.orm import Session, Query
 from sqlalchemy.sql.selectable import Select
 
-from sources.connections.sqlalchemy import Base
-from sources.errors import NotFoundException
+from fastapi_data.connections.sqlalchemy import Base
+from fastapi_data.errors import NotFoundException
 
 ModelType = TypeVar("ModelType", bound=Base)
 
