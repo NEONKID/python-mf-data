@@ -4,9 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Neon K.I.D <contact@neonkid.xyz>"]
 packages = [
-    { include = "common", from = "lib" },
-    { include = "sql", from = "lib", format = "sdist" },
-    { include = "mongodb", from = "lib" }
+    { include = "pymfdata" }
 ]
 
 [tool.poetry.dependencies]
