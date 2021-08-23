@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from contextlib import AbstractAsyncContextManager, AbstractContextManager
-from typing import Callable, final, Iterator, Type, TypeVar
+from typing import AsyncIterator, Callable, final, Iterator, Type, TypeVar
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session, Query
@@ -40,7 +40,7 @@ class AsyncRepository(ABC):
         return stmt
 
     @final
-    async def find_all(self, **kwargs) -> Iterator[Type[ModelType]]:
+    async def find_all(self, **kwargs) -> AsyncIterator[Type[ModelType]]:
         session: AsyncSession
         async with self._session_factory() as session:
             stmt = self._gen_stmt_for_param(**kwargs)
