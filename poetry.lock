@@ -184,7 +184,7 @@ sql = ["SQLAlchemy"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "b0843c7c767262749c4a32f6b366d70b7c0e360e508b83586e3b7ae376fe5e1f"
+content-hash = "602d56688bc68992d9dca3f0d43d0c733ae2a71733bfaa9f8515feccb3ed25e1"
 
 [metadata.files]
 atomicwrites = [
