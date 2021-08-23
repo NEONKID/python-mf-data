@@ -6,9 +6,15 @@ authors = ["Neon K.I.D <contact@neonkid.xyz>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-SQLAlchemy = "1.4.22"
+motor = {version = "2.5.1", optional = true}
+SQLAlchemy = {version = "1.4.22", optional = true}
 
 [tool.poetry.dev-dependencies]
+pytest = "^6.2.4"
+
+[tool.poetry.extras]
+mongodb = ["motor"]
+sql = ["SQLAlchemy"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
