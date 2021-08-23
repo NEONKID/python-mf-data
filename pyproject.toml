@@ -4,9 +4,9 @@ version = "0.1.0"
 description = ""
 authors = ["Neon K.I.D <contact@neonkid.xyz>"]
 packages = [
-    { include = "src" },
-    { include = "src/sql" },
-    { include = "src/mongodb" }
+    { include = "common", from = "lib" },
+    { include = "sql", from = "lib" },
+    { include = "mongodb", from = "lib" }
 ]
 
 [tool.poetry.dependencies]

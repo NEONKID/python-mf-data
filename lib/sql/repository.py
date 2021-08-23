@@ -6,8 +6,8 @@ from sqlalchemy.future import select
 from sqlalchemy.orm import Session, Query
 from sqlalchemy.sql.selectable import Select
 
-from src.sql.connection import Base
-from src.common.errors import NotFoundException
+from lib.sql.connection import Base
+from lib.common.errors import NotFoundException
 
 ModelType = TypeVar("ModelType", bound=Base)
 
