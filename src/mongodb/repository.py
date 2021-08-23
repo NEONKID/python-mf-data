@@ -2,8 +2,8 @@ from abc import ABC
 from bson import ObjectId
 from typing import final
 
-from src.connections.motor import AsyncMotor
-from src.errors import NotFoundException
+from src.mongodb.connection import AsyncMotor
+from src.common.errors import NotFoundException
 
 
 class AsyncRepository(ABC):
