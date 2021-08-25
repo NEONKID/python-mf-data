@@ -2,8 +2,8 @@ from abc import ABC
 from bson import ObjectId
 from typing import final
 
-from py_mf_data.connections.motor import AsyncMotor
-from py_mf_data.errors import NotFoundException
+from pymfdata.mongodb.connection import AsyncMotor
+from pymfdata.common.errors import NotFoundException
 
 
 class AsyncRepository(ABC):
