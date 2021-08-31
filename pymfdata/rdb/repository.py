@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from contextlib import AbstractAsyncContextManager, AbstractContextManager
-from typing import AsyncIterator, Callable, final, Iterator, Type, TypeVar
+from typing import AsyncIterator, Callable, final, Generic, Iterator, TypeVar
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session, Query
@@ -9,20 +9,20 @@ from sqlalchemy.sql.selectable import Select
 from pymfdata.rdb.connection import Base
 from pymfdata.common.errors import NotFoundException
 
-ModelType = TypeVar("ModelType", bound=Base)
+MT = TypeVar("MT", bound=Base)
 
 
-class AsyncRepository(ABC):
-    def __init__(self, model: Type[ModelType], session_factory: Callable[..., AbstractAsyncContextManager]) -> None:
+class AsyncRepository(ABC, Generic[MT]):
+    def __init__(self, model: MT, session_factory: Callable[..., AbstractAsyncContextManager]) -> None:
         self.model = model
         self._session_factory = session_factory
 
     @abstractmethod
-    async def find_by_pk(self, pk) -> Type[ModelType]:
+    async def find_by_pk(self, pk) -> MT:
         raise NotImplementedError("Required implementation")
 
     @final
-    async def find_by_col(self, **kwargs) -> Type[ModelType]:
+    async def find_by_col(self, **kwargs) -> MT:
         if not await self.is_exists(**kwargs):
             raise NotFoundException()
 
@@ -40,7 +40,7 @@ class AsyncRepository(ABC):
         return stmt
 
     @final
-    async def find_all(self, **kwargs) -> AsyncIterator[Type[ModelType]]:
+    async def find_all(self, **kwargs) -> AsyncIterator[MT]:
         session: AsyncSession
         async with self._session_factory() as session:
             stmt = self._gen_stmt_for_param(**kwargs)
@@ -62,17 +62,17 @@ class AsyncRepository(ABC):
             await session.commit()
 
 
-class SyncRepository(ABC):
-    def __init__(self, model: Type[ModelType], session_factory: Callable[..., AbstractContextManager]) -> None:
+class SyncRepository(ABC, Generic[MT]):
+    def __init__(self, model: MT, session_factory: Callable[..., AbstractContextManager]) -> None:
         self.model = model
         self._session_factory = session_factory
 
     @abstractmethod
-    def find_by_pk(self, pk) -> Type[ModelType]:
+    def find_by_pk(self, pk) -> MT:
         raise NotImplementedError("Required implementation")
 
     @final
-    def find_by_col(self, **kwargs) -> Type[ModelType]:
+    def find_by_col(self, **kwargs) -> MT:
         if not self.is_exists(**kwargs):
             raise NotFoundException()
 
@@ -89,7 +89,7 @@ class SyncRepository(ABC):
         return query
 
     @final
-    def find_all(self, **kwargs) -> Iterator[Type[ModelType]]:
+    def find_all(self, **kwargs) -> Iterator[MT]:
         session: Session
         with self._session_factory() as session:
             query = self._gen_query_for_param(session, **kwargs)
