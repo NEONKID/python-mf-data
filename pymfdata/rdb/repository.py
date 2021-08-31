@@ -1,4 +1,3 @@
-from abc import abstractmethod
 from contextlib import AbstractAsyncContextManager, AbstractContextManager
 from typing import AsyncIterator, Callable, final, Iterator, Protocol, TypeVar
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,10 +14,21 @@ _MT = TypeVar("_MT", bound=Base)
 class AsyncRepository(Protocol[_MT]):
     _model: _MT
     _session_factory: Callable[..., AbstractAsyncContextManager]
+    _pk_column: str
 
-    @abstractmethod
+    async def delete_by_pk(self, pk):
+        if not await self.is_exists(**{self._pk_column: pk}):
+            raise NotFoundException()
+
+        item = await self.find_by_pk(pk)
+
+        session: AsyncSession
+        async with self._session_factory() as session:
+            await session.delete(item)
+            await session.commit()
+
     async def find_by_pk(self, pk) -> _MT:
-        raise NotImplementedError("Required implementation {}".format(self.find_by_pk.__name__))
+        return await self.find_by_col(**{self._pk_column: pk})
 
     @final
     async def find_by_col(self, **kwargs) -> _MT:
@@ -59,15 +69,31 @@ class AsyncRepository(Protocol[_MT]):
         async with self._session_factory() as session:
             session.add(item)
             await session.commit()
+            await session.refresh(item)
+
+    async def update_by_pk(self, pk, req: dict):
+        if not await self.is_exists(**{self._pk_column: pk}):
+            raise NotFoundException()
+
+        item = await self.find_by_pk(pk)
+
+        session: AsyncSession
+        async with self._session_factory() as session:
+            for k, v in req.items():
+                if v is not None:
+                    setattr(item, k, v)
+
+            await session.commit()
+            await session.refresh(item)
 
 
 class SyncRepository(Protocol[_MT]):
     _model: _MT
     _session_factory: Callable[..., AbstractContextManager]
+    _pk_column: str
 
-    @abstractmethod
     def find_by_pk(self, pk) -> _MT:
-        raise NotImplementedError("Required implementation")
+        return self.find_by_col(**{self._pk_column: pk})
 
     @final
     def find_by_col(self, **kwargs) -> _MT:
@@ -83,7 +109,7 @@ class SyncRepository(Protocol[_MT]):
         query = session.query(self._model)
         if kwargs:
             for key, value in kwargs.items():
-                query = query.filter(getattr(self._model.key) == value)
+                query = query.filter(getattr(self._model, key) == value)
         return query
 
     @final
