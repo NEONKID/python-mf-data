@@ -1,9 +1,8 @@
 from abc import ABC
 from bson import ObjectId
-from typing import final
+from typing import final, Optional
 
 from pymfdata.mongodb.connection import AsyncMotor
-from pymfdata.common.errors import NotFoundException
 
 
 class AsyncRepository(ABC):
@@ -11,10 +10,12 @@ class AsyncRepository(ABC):
         self._collection = motor.client[motor.db_name][collection_name]
 
     @final
-    async def delete_by_id(self, item_id: str):
+    async def delete_by_id(self, item_id: str) -> bool:
         row = await self._collection.delete_one({"_id": ObjectId(item_id)})
         if not row:
-            raise NotFoundException()
+            return False
+
+        return True
 
     @final
     async def find_all(self):
@@ -24,10 +25,10 @@ class AsyncRepository(ABC):
         return results
 
     @final
-    async def find_by_id(self, item_id: str):
+    async def find_by_id(self, item_id: str) -> Optional[dict]:
         row = await self._collection.find_one({"_id": ObjectId(item_id)})
         if not row:
-            raise NotFoundException()
+            return None
 
         return row
 

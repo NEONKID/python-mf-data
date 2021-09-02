@@ -1,39 +1,39 @@
 from contextlib import AbstractAsyncContextManager, AbstractContextManager
-from typing import AsyncIterator, Callable, final, Iterator, Protocol, TypeVar
+from typing import Callable, final, Iterator, List, Protocol, TypeVar, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session, Query
 from sqlalchemy.sql.selectable import Select
 
 from pymfdata.rdb.connection import Base
-from pymfdata.common.errors import NotFoundException
 
-_MT = TypeVar("_MT", bound=Base)
+_MT = TypeVar("_MT", bound=Base)    # Model Type
+_T = TypeVar("_T")                  # Primary key Type
 
 
-class AsyncRepository(Protocol[_MT]):
+class AsyncRepository(Protocol[_MT, _T]):
     _model: _MT
     _session_factory: Callable[..., AbstractAsyncContextManager]
     _pk_column: str
 
-    async def delete_by_pk(self, pk):
-        if not await self.is_exists(**{self._pk_column: pk}):
-            raise NotFoundException()
-
+    async def delete_by_pk(self, pk: _T) -> bool:
         item = await self.find_by_pk(pk)
+        if item is not None:
+            session: AsyncSession
+            async with self._session_factory() as session:
+                await session.delete(item)
+                await session.commit()
 
-        session: AsyncSession
-        async with self._session_factory() as session:
-            await session.delete(item)
-            await session.commit()
+            return True
+        return False
 
-    async def find_by_pk(self, pk) -> _MT:
+    async def find_by_pk(self, pk: _T) -> Optional[_MT]:
         return await self.find_by_col(**{self._pk_column: pk})
 
     @final
-    async def find_by_col(self, **kwargs) -> _MT:
+    async def find_by_col(self, **kwargs) -> Optional[_MT]:
         if not await self.is_exists(**kwargs):
-            raise NotFoundException()
+            return None
 
         session: AsyncSession
         async with self._session_factory() as session:
@@ -49,7 +49,7 @@ class AsyncRepository(Protocol[_MT]):
         return stmt
 
     @final
-    async def find_all(self, **kwargs) -> AsyncIterator[_MT]:
+    async def find_all(self, **kwargs) -> List[_MT]:
         session: AsyncSession
         async with self._session_factory() as session:
             stmt = self._gen_stmt_for_param(**kwargs)
@@ -71,34 +71,45 @@ class AsyncRepository(Protocol[_MT]):
             await session.commit()
             await session.refresh(item)
 
-    async def update_by_pk(self, pk, req: dict):
-        if not await self.is_exists(**{self._pk_column: pk}):
-            raise NotFoundException()
-
+    async def update_by_pk(self, pk: _T, req: dict) -> bool:
         item = await self.find_by_pk(pk)
+        if item is not None:
+            session: AsyncSession
+            async with self._session_factory() as session:
+                for k, v in req.items():
+                    if v is not None:
+                        setattr(item, k, v)
 
-        session: AsyncSession
-        async with self._session_factory() as session:
-            for k, v in req.items():
-                if v is not None:
-                    setattr(item, k, v)
+                await session.commit()
+                await session.refresh(item)
 
-            await session.commit()
-            await session.refresh(item)
+            return True
+        return False
 
 
-class SyncRepository(Protocol[_MT]):
+class SyncRepository(Protocol[_MT, _T]):
     _model: _MT
     _session_factory: Callable[..., AbstractContextManager]
     _pk_column: str
 
-    def find_by_pk(self, pk) -> _MT:
+    def delete_by_pk(self, pk: _T) -> bool:
+        item = self.find_by_pk(pk)
+        if item is not None:
+            session: Session
+            with self._session_factory() as session:
+                session.delete(item)
+                session.commit()
+
+            return True
+        return False
+
+    def find_by_pk(self, pk: _T) -> Optional[_MT]:
         return self.find_by_col(**{self._pk_column: pk})
 
     @final
-    def find_by_col(self, **kwargs) -> _MT:
+    def find_by_col(self, **kwargs) -> Optional[_MT]:
         if not self.is_exists(**kwargs):
-            raise NotFoundException()
+            return None
 
         with self._session_factory() as session:
             query = self._gen_query_for_param(session, **kwargs)
@@ -121,8 +132,8 @@ class SyncRepository(Protocol[_MT]):
 
     @final
     def is_exists(self, **kwargs) -> bool:
+        session: Session
         with self._session_factory() as session:
-            session: Session
             return session.query(self._gen_query_for_param(session, **kwargs).exists()).scalar()
 
     @final
@@ -131,3 +142,18 @@ class SyncRepository(Protocol[_MT]):
         with self._session_factory() as session:
             session.add(item)
             session.commit()
+
+    def update_by_pk(self, pk: _T, req: dict) -> bool:
+        item = self.find_by_pk(pk)
+        if item is not None:
+            session: Session
+            with self._session_factory() as session:
+                for k, v in req.items():
+                    if v is not None:
+                        setattr(item, k, v)
+
+                await session.commit()
+                await session.refresh(item)
+
+            return True
+        return False
