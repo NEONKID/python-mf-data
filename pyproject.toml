@@ -11,13 +11,14 @@ packages = [
 python = "^3.8"
 motor = {version = "2.5.1", optional = true}
 SQLAlchemy = {version = "1.4.22", optional = true}
+alembic = {version = "^1.7.1", optional = true}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
 
 [tool.poetry.extras]
 mongodb = ["motor"]
-rdb = ["SQLAlchemy"]
+rdb = ["alembic", "SQLAlchemy"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
