@@ -1,6 +1,6 @@
 from abc import ABC
 from bson import ObjectId
-from typing import final, Optional
+from typing import final, List, Optional
 
 from pymfdata.mongodb.connection import AsyncMotor
 
@@ -18,7 +18,7 @@ class AsyncRepository(ABC):
         return True
 
     @final
-    async def find_all(self):
+    async def find_all(self) -> List[dict]:
         cursor = self._collection.find()
         results = list(map(lambda item: item, await cursor.to_list(length=100)))
 
@@ -33,10 +33,10 @@ class AsyncRepository(ABC):
         return row
 
     @final
-    async def save(self, req: dict):
+    async def save(self, req: dict) -> dict:
         return await self._collection.insert_one(req)
 
     @final
-    async def update_by_id(self, item_id: str, req: dict):
+    async def update_by_id(self, item_id: str, req: dict) -> dict:
         await self._collection.update_one({"_id": ObjectId(item_id)}, req)
         return await self.find_by_id(item_id)

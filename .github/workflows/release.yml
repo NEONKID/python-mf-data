@@ -1,4 +1,4 @@
-name: Create Release
+name: Python Micro Framework Data Release
 
 on:
   push:
@@ -13,5 +13,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          bump_version_scheme: minor
+          bump_version_scheme: norelease
           tag_prefix: v
