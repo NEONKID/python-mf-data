@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "python-mf-data"
-version = "0.1.0"
+version = "0.1.2"
 description = ""
 authors = ["Neon K.I.D <contact@neonkid.xyz>"]
 packages = [
