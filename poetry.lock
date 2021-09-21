@@ -1,6 +1,6 @@
 [[package]]
 name = "alembic"
-version = "1.7.1"
+version = "1.7.3"
 description = "A database migration tool for SQLAlchemy."
 category = "main"
 optional = true
@@ -255,8 +255,8 @@ content-hash = "6430ac2f386a941fbba616310dde28ea637dcf40523517f5089a98eb6b47aa0e
 
 [metadata.files]
 alembic = [
-    {file = "alembic-1.7.1-py3-none-any.whl", hash = "sha256:25f996b7408b11493d6a2d669fd9d2ff8d87883fe7434182bc7669d6caa526ab"},
-    {file = "alembic-1.7.1.tar.gz", hash = "sha256:aea964d3dcc9c205b8759e4e9c1c3935ea3afeee259bffd7ed8414f8085140fb"},
+    {file = "alembic-1.7.3-py3-none-any.whl", hash = "sha256:d0c580041f9f6487d5444df672a83da9be57398f39d6c1802bbedec6fefbeef6"},
+    {file = "alembic-1.7.3.tar.gz", hash = "sha256:bc5bdf03d1b9814ee4d72adc0b19df2123f6c50a60c1ea761733f3640feedb8d"},
 ]
 atomicwrites = [
     {file = "atomicwrites-1.4.0-py2.py3-none-any.whl", hash = "sha256:6d1784dea7c0c8d4a5172b6c620f40b6e4cbfdf96d783691f2e1302a7b88e197"},
