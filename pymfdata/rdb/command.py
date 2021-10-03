@@ -18,6 +18,9 @@ class AbstractAsyncUnitOfWork(Protocol):
     async def flush(self):
         await self._session.flush()
 
+    async def refresh(self, item):
+        await self._session.refresh(item)
+
     async def rollback(self):
         await self._session.rollback()
 

@@ -57,6 +57,10 @@ class AsyncRepository(Protocol[_MT, _T]):
     async def create(self, item: _MT):
         self._session.add(item)
 
+    @final
+    async def create_all(self, items: List[_MT]):
+        self._session.add_all(items)
+
     def update(self, item: _MT, req: dict):
         for k, v in req.items():
             if v is not None:
