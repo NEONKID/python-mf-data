@@ -1,6 +1,6 @@
 from asyncio import current_task
 from contextlib import asynccontextmanager, contextmanager
-from typing import Callable, Union
+from typing import Callable, Union, Optional
 
 from sqlalchemy.engine import Engine, create_engine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_scoped_session, create_async_engine
@@ -13,7 +13,7 @@ Base = declarative_base()
 class AsyncSQLAlchemy:
     def __init__(self, db_uri: str) -> None:
         self._db_uri = db_uri
-        self._engine: Union[AsyncEngine, None] = None
+        self._engine: Optional[AsyncEngine] = None
         self._session_factory = None
 
     async def create_database(self) -> None:
@@ -43,6 +43,11 @@ class AsyncSQLAlchemy:
             raise
         finally:
             await session.close()
+
+    @property
+    def engine(self):
+        assert self._engine is not None
+        return self._engine
 
     @property
     def session_factory(self):
