@@ -1,6 +1,6 @@
 from asyncio import current_task
 from contextlib import asynccontextmanager, contextmanager
-from typing import AsyncIterator, Callable, Iterator, Union
+from typing import Callable, Union
 
 from sqlalchemy.engine import Engine, create_engine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_scoped_session, create_async_engine
@@ -20,17 +20,21 @@ class AsyncSQLAlchemy:
         async with self._engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
 
-    async def connect(self, autocommit: bool = False, autoflush: bool = False):
-        self._engine = create_async_engine(self._db_uri, echo=True)
-        self._session_factory = async_scoped_session(
-            sessionmaker(autocommit=autocommit, autoflush=autoflush, bind=self._engine, class_=AsyncSession),
-            scopefunc=current_task)
+    async def connect(self, **kwargs):
+        self._engine = create_async_engine(self._db_uri, **kwargs)
 
     async def disconnect(self):
         await self._engine.dispose()
 
+    def init_session_factory(self, autocommit: bool = False, autoflush: bool = False):
+        self._session_factory = async_scoped_session(
+            sessionmaker(autocommit=autocommit, autoflush=autoflush, bind=self._engine, class_=AsyncSession),
+            scopefunc=current_task)
+
     @asynccontextmanager
     async def session(self) -> Callable[..., AsyncSession]:
+        assert self._session_factory is not None
+
         session: AsyncSession = self._session_factory()
         try:
             yield session
