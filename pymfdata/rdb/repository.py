@@ -54,7 +54,7 @@ class AsyncRepository(Protocol[_MT, _T]):
         return result.scalar()
 
     @final
-    async def create(self, item: _MT):
+    def create(self, item: _MT):
         self._session.add(item)
 
     @final
