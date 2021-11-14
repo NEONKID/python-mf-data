@@ -10,7 +10,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.8"
 motor = {version = "2.5.1", optional = true}
-SQLAlchemy = {version = "1.4.22", optional = true}
+SQLAlchemy = {extras = ["asyncio"], version = "^1.4.26", optional = true}
 alembic = {version = "^1.7.1", optional = true}
 
 [tool.poetry.dev-dependencies]
