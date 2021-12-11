@@ -102,7 +102,7 @@ class SyncRepository(Protocol[_MT, _T]):
         return query
 
     @final
-    def find_all(self, **kwargs) -> Iterator[_MT]:
+    def find_all(self, **kwargs) -> List[_MT]:
         query = self._gen_query_for_param(**kwargs)
         return query.all()
 

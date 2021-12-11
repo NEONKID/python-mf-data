@@ -64,13 +64,15 @@ class SyncSQLAlchemy:
     def create_database(self) -> None:
         Base.metadata.create_all(self._engine)
 
-    def connect(self, autocommit: bool = False, autoflush: bool = False):
-        self._engine = create_engine(self._db_uri, echo=True)
-        self._session_factory = scoped_session(sessionmaker(autocommit=autocommit,
-                                                            autoflush=autoflush, bind=self._engine))
+    def connect(self, **kwargs):
+        self._engine = create_engine(self._db_uri, **kwargs)
 
     def disconnect(self):
         self._engine.dispose()
+
+    def init_session_factory(self, autocommit: bool = False, autoflush: bool = False):
+        self._session_factory = scoped_session(sessionmaker(autocommit=autocommit,
+                                                            autoflush=autoflush, bind=self._engine))
 
     @contextmanager
     def session(self) -> Callable[..., Session]:

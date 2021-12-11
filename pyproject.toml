@@ -10,11 +10,11 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.8"
 motor = {version = "2.5.1", optional = true}
-SQLAlchemy = {extras = ["asyncio"], version = "^1.4.26", optional = true}
+SQLAlchemy = {extras = ["asyncio"], version = "^1.4.28", optional = true}
 alembic = {version = "^1.7.1", optional = true}
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.4"
+pytest-asyncio = "^0.16.0"
 
 [tool.poetry.extras]
 mongodb = ["motor"]
