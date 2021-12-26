@@ -41,13 +41,15 @@ If you want to create a connection in SQLAlchemy using ```pymfdata```, please fo
 ```python
 from pymfdata.rdb.connection import AsyncSQLAlchemy
 
-connection = AsyncSQLAlchemy(db_uri='postgresql+asyncpg://{}:{}@{}:{}/{}'.format('postgres', 'postgres', '127.0.0.1', '5432', 'test'))
+connection = AsyncSQLAlchemy(db_uri='postgresql+asyncpg://{}:{}@{}:{}/{}'.format(
+    'postgres', 'postgres', '127.0.0.1', '5432', 'test'))
 ```
 
 ```python
 from pymfdata.rdb.connection import SyncSQLAlchemy
 
-connection = SyncSQLAlchemy(db_uri='postgresql+psycopg2://{}:{}@{}:{}/{}'.format('postgres', 'postgres', '127.0.0.1', '5432', 'test'))
+connection = SyncSQLAlchemy(db_uri='postgresql+psycopg2://{}:{}@{}:{}/{}'.format(
+    'postgres', 'postgres', '127.0.0.1', '5432', 'test'))
 ```
 
 When creating a connection, make sure that the application you are developing supports asynchronous processing, and then use the correct one.
