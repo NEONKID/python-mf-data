@@ -75,9 +75,11 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const ref = "${{github.ref}}"
+            const token = process.env["GITHUB_TOKEN"]
+            const octokit = new github.getOctokit(token)
             const pull_number = Number(ref.split("/")[2])
             
-            await github.pulls.requestReviewers({
+            await octokit.pulls.requestReviewers({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: pull_number,
