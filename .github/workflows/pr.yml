@@ -10,8 +10,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [ 3.8.5 ]
-        poetry-version: [ 1.1.2 ]
+        python-version: [ 3.8 ]
+        poetry-version: [ 1.1.11 ]
         os: [ ubuntu-latest ]
 
     services:
@@ -40,7 +40,6 @@ jobs:
 
       - name: Test environment Setup Poetry
         uses: abatilo/actions-poetry@v2.0.0
-        #        if: steps.cache-poetry.outputs.cache-hit != 'true'
         with:
           poetry-version: ${{ matrix.poetry-version }}
 
