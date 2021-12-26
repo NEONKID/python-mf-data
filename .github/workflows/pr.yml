@@ -49,7 +49,7 @@ jobs:
           poetry install
           poetry install -E rdb
           poetry install -E mongodb
-          
+
       - name: Python Micro Framework Data Test
         run: |
           pytest -v
