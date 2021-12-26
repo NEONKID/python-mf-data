@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "python-mf-data"
-version = "0.1.2"
-description = ""
+version = "0.2.0"
+description = "Python Micro Framework Data"
 authors = ["Neon K.I.D <contact@neonkid.xyz>"]
 packages = [
     { include = "pymfdata" }
@@ -10,11 +10,15 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.8"
 motor = {version = "2.5.1", optional = true}
-SQLAlchemy = {version = "1.4.22", optional = true}
-alembic = {version = "^1.7.1", optional = true}
+SQLAlchemy = {extras = ["asyncio"], version = "^1.4.28", optional = true}
+alembic = {version = "^1.7.5", optional = true}
+asyncio = "^3.4.3"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.4"
+pytest-asyncio = "^0.16.0"
+pydantic = {extras = ["email"], version = "^1.8.2"}
+psycopg2-binary = "^2.9.2"
+asyncpg = "^0.25.0"
 
 [tool.poetry.extras]
 mongodb = ["motor"]
