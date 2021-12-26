@@ -45,14 +45,14 @@ jobs:
 
       - name: Install Python Micro Framework Data dependencies..
         run: |
-          poetry config virtualenvs.in-project false
+          poetry config virtualenvs.create false
           poetry install
           poetry install -E rdb
           poetry install -E mongodb
 
       - name: Python Micro Framework Data Test
         run: |
-          python -m pytest
+          pytest -v
 
       - name: PR request changes if test failed
         uses: actions/github-script@0.2.0
