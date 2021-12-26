@@ -2,7 +2,7 @@
 
 Python Micro Framework Data makes database connections easier in microframeworks like ```Falcon``` and ```FastAPI```.
 
-This library is created with the motif of Spring Data Common, and the relational database is implemented based on ```SQLAlchemy```
+This library is created with the motive of Spring Data Common, and the relational database is implemented based on ```SQLAlchemy```
 
 
 
