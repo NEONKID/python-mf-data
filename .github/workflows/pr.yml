@@ -1,0 +1,86 @@
+name: Python Micro Framework Data Pull Request
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+
+jobs:
+  mf_data_test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: [ 3.8.5 ]
+        poetry-version: [ 1.1.2 ]
+        os: [ ubuntu-latest ]
+
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_DB: test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Test environment Setup Python..
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Pull github repositories...
+        uses: actions/checkout@v1
+
+      - name: Test environment Setup Poetry
+        uses: abatilo/actions-poetry@v2.0.0
+        #        if: steps.cache-poetry.outputs.cache-hit != 'true'
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+
+      - name: Install Python Micro Framework Data dependencies..
+        run: |
+          poetry config virtualenvs.in-project false
+          poetry install
+          poetry install -E rdb
+          poetry install -E mongodb
+          
+      - name: Python Micro Framework Data Test
+        run: |
+          pytest -v
+
+      - name: PR request changes if test failed
+        uses: actions/github-script@0.2.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const ref = "${{github.ref}}"
+            const pull_number = Number(ref.split("/")[2])
+            await github.pulls.createReview({
+              ...context.repo,
+              pull_number,
+              body: "Test code failed, check your code",
+              event: "REQUEST_CHANGES"
+            })
+        if: failure()
+            
+      - name: PR request review if test success
+        uses: actions/github-script@0.2.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const ref = "${{github.ref}}"
+            const pull_number = Number(ref.split("/")[2])
+            
+            await github.pulls.requestReviewers({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pull_number,
+              reviewers: ["NEONKID"]
+            })
