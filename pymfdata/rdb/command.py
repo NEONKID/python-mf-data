@@ -1,15 +1,20 @@
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.engine import Engine
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 from sqlalchemy.orm import Session
-from typing import Callable, Protocol
+from typing import Optional, Type
+
+from common.command import AsyncBaseUnitOfWork, SyncBaseUnitOfWork
 
 
-class AbstractAsyncUnitOfWork(Protocol):
-    _session_factory: Callable[..., AsyncSession]
+class AsyncSQLAlchemyUnitOfWork(AsyncBaseUnitOfWork):
+    def __init__(self, engine: AsyncEngine) -> None:
+        self._engine = engine
+        self._session: Optional[AsyncSession] = None
 
     async def __aenter__(self):
-        self._session = self._session_factory()
+        self._session = AsyncSession(self._engine)
 
-    async def __aexit__(self, exc_type, exc_val, traceback):
+    async def __aexit__(self, exc_type: Optional[Type[Exception]], exc_val: Optional[Exception], traceback):
         await self._session.close()
 
     async def commit(self):
@@ -25,13 +30,15 @@ class AbstractAsyncUnitOfWork(Protocol):
         await self._session.rollback()
 
 
-class AbstractSyncUnitOfWork(Protocol):
-    _session_factory: Callable[..., Session]
+class SyncSQLAlchemyUnitOfWork(SyncBaseUnitOfWork):
+    def __init__(self, engine: Engine) -> None:
+        self._engine = engine
+        self._session: Optional[Session] = None
 
     def __enter__(self):
-        self._session = self._session_factory()
+        self._session = Session(self._engine)
 
-    def __exit__(self, exc_type, exc_val, traceback):
+    def __exit__(self, exc_type: Optional[Type[Exception]], exc_val: Optional[Exception], traceback):
         self._session.close()
 
     def commit(self):
