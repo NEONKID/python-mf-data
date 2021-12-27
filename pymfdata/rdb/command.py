@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 from sqlalchemy.orm import Session
 from typing import Optional, Type
 
-from common.command import AsyncBaseUnitOfWork, SyncBaseUnitOfWork
+from pymfdata.common.command import AsyncBaseUnitOfWork, SyncBaseUnitOfWork
 
 
 class AsyncSQLAlchemyUnitOfWork(AsyncBaseUnitOfWork):
