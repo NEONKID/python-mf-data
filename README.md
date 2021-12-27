@@ -1,6 +1,6 @@
 # Python Micro Framework Data
 
-* [한국어](README.ko.md)
+* [한국어](https://github.com/NEONKID/python-mf-data/README.ko.md)
 
 
 

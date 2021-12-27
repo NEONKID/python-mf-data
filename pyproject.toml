@@ -6,6 +6,11 @@ authors = ["Neon K.I.D <contact@neonkid.xyz>"]
 packages = [
     { include = "pymfdata" }
 ]
+repository = "https://github.com/NEONKID/python-mf-data"
+readme = "README.md"
+
+[tool.poetry.build]
+generate-setup-file = false
 
 [tool.poetry.dependencies]
 python = "^3.8"
