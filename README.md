@@ -1,12 +1,6 @@
 # Python Micro Framework Data
 
-Python Micro Framework Data makes database connections easier in microframeworks like [Falcon](https://falcon.readthedocs.io/en/stable/) and [FastAPI](https://fastapi.tiangolo.com/).
-
-This library is created with the motive of [Spring Data Commons](https://docs.spring.io/spring-data/commons/docs/current/reference/html/), and the relational database is implemented based on [SQLAlchemy](https://www.sqlalchemy.org/)
-
-
-
-Currently, this library is **still under development**. The only stable database, **SQLAlchemy**, is the relational database, and we plan to implement it so that it can be used separately according to synchronous and asynchronous processing.
+* [한국어](README.ko.md)
 
 
 
@@ -14,19 +8,13 @@ Currently, this library is **still under development**. The only stable database
 
 
 
-## How to install (rdb)
+Python Micro Framework Data makes database connections easier in microframeworks like [Falcon](https://falcon.readthedocs.io/en/stable/) and [FastAPI](https://fastapi.tiangolo.com/).
 
-pymfdata can use the extra option to specify which database to use. When using this library for relational database connection, use the command below.
+This library is created with the motive of [Spring Data Commons](https://docs.spring.io/spring-data/commons/docs/current/reference/html/), and the relational database is implemented based on [SQLAlchemy](https://www.sqlalchemy.org/)
 
-```python
-$ pip install pymfdata[rdb]
-```
 
-Or if you are using poetry, use the following command
 
-```python
-$ poetry add "pymfdata[rdb]"
-```
+Currently, this library is **still under development**. The only stable database, **SQLAlchemy**, is the relational database, and we plan to implement it so that it can be used separately according to synchronous and asynchronous processing.
 
 
 
