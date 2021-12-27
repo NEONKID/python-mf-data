@@ -9,25 +9,25 @@ class Propagation(enum.Enum):
 
 
 async def __async_run_required(self, func, read_only: bool, session: AsyncSession, args, kwargs):
-    is_transaction_active = session.is_active
-    if not is_transaction_active:
+    if not session.is_active:
         session.begin(subtransactions=True)
-        result = await func(self, *args, **kwargs)
-        if not read_only:
-            await session.commit()
 
-        return result
+    result = await func(self, *args, **kwargs)
+    if not read_only:
+        await session.commit()
+
+    return result
 
 
 def __run_required(self, func, read_only: bool, session: Session, args, kwargs):
-    is_transaction_active = session.is_active
-    if not is_transaction_active:
+    if not session.is_active:
         session.begin(subtransactions=True)
-        result = func(self, *args, **kwargs)
-        if not read_only:
-            session.commit()
 
-        return result
+    result = func(self, *args, **kwargs)
+    if not read_only:
+        session.commit()
+
+    return result
 
 
 async def __async_run_requires_new(self, func, read_only: bool, session: AsyncSession, args, kwargs):
