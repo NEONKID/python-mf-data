@@ -18,6 +18,26 @@ Python Micro Framework Data는 [Falcon](https://falcon.readthedocs.io/en/stable/
 
 
 
+## How to install (rdb)
+
+Python Micro Framework Data 라이브러리를 관계형 데이터베이스용도로 설치하는 경우 아래의 명령어를 입력하십시오.
+
+```shell
+$ pip install python-mf-data[rdb]
+```
+
+```shell
+$ poetry add "python-mf-data[rdb]"
+```
+
+extra 옵션에 반드시 rdb를 입력해야 SQLAlchemy 등의 하위 디펜던시가 설치됩니다.
+
+
+
+<br />
+
+
+
 ## Connection Example (rdb)
 
 아래의 코드는 pymfdata에 있는 SQLAlchemy의 커넥션을 생성하는 예제입니다.
