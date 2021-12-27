@@ -66,7 +66,7 @@ def async_transactional(read_only: bool = False, propagation: Propagation = Prop
 
                     return result
 
-            if hasattr(self, 'session'):
+            elif hasattr(self, 'session'):
                 if propagation == Propagation.REQUIRED:
                     result = await __async_run_required(self=self, func=func, read_only=read_only,
                                                         session=self.session, args=args, kwargs=kwargs)
@@ -95,7 +95,7 @@ def sync_transactional(read_only: bool = False, propagation: Propagation = Propa
 
                     return result
 
-            if hasattr(self, 'session'):
+            elif hasattr(self, 'session'):
                 if propagation == Propagation.REQUIRED:
                     result = __run_required(self=self, func=func, read_only=read_only,
                                             session=self.session, args=args, kwargs=kwargs)
