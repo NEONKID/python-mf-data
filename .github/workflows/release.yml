@@ -6,7 +6,7 @@ on:
       - 'main'
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: rymndhng/release-on-push-action@master
@@ -15,3 +15,22 @@ jobs:
         with:
           bump_version_scheme: norelease
           tag_prefix: v
+
+      - name: Test environment Setup Python..
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Pull github repositories...
+        uses: actions/checkout@v1
+
+      - name: Test environment Setup Poetry
+        uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+
+      - name: Set deploy config  Python Micro Framework Data
+        run: |
+          poetry config pypi-token.pypi ${{ secrets.PYPI_API_TOKEN }}
+          poetry build
+          poetry publish
