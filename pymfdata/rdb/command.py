@@ -17,17 +17,11 @@ class AsyncSQLAlchemyUnitOfWork(AsyncBaseUnitOfWork):
     async def __aexit__(self, exc_type: Optional[Type[Exception]], exc_val: Optional[Exception], traceback):
         await self.session.close()
 
-    def begin(self, **kwargs):
-        self.session.begin(**kwargs)
-
     async def commit(self):
         await self.session.commit()
 
     async def flush(self):
         await self.session.flush()
-
-    def is_active(self) -> bool:
-        return self.session.is_active
 
     async def refresh(self, item):
         await self.session.refresh(item)
@@ -47,17 +41,11 @@ class SyncSQLAlchemyUnitOfWork(SyncBaseUnitOfWork):
     def __exit__(self, exc_type: Optional[Type[Exception]], exc_val: Optional[Exception], traceback):
         self.session.close()
 
-    def begin(self, **kwargs):
-        self.session.begin(**kwargs)
-
     def commit(self):
         self.session.commit()
 
     def flush(self):
         self.session.flush()
-
-    def is_active(self) -> bool:
-        return self.session.is_active
 
     def rollback(self):
         self.session.rollback()

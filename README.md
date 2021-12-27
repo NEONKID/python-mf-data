@@ -22,6 +22,26 @@ Currently, this library is **still under development**. The only stable database
 
 
 
+## How to install (rdb)
+
+If you are installing the Python Micro Framework Data library for a relational database, enter the command below.
+
+```shell
+$ pip install python-mf-data[rdb]
+```
+
+```shell
+$ poetry add "python-mf-data[rdb]"
+```
+
+You must enter **rdb** in the extra option to install sub-dependencies such as SQLAlchemy.
+
+
+
+<br />
+
+
+
 ## Connection Example (rdb)
 
 If you want to create a connection in SQLAlchemy using ```pymfdata```, please follow the instructions below.
