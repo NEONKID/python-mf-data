@@ -8,7 +8,7 @@ class Propagation(enum.Enum):
     REQUIRES_NEW = "requires_new"
 
 
-async def __async_run_required(self, func, read_only: bool, session: AsyncSession, args, kwargs):
+async def __async_propagation_required(self, func, read_only: bool, session: AsyncSession, args, kwargs):
     if not session.is_active:
         session.begin(subtransactions=True)
 
@@ -19,7 +19,7 @@ async def __async_run_required(self, func, read_only: bool, session: AsyncSessio
     return result
 
 
-def __run_required(self, func, read_only: bool, session: Session, args, kwargs):
+def __sync_propagation_required(self, func, read_only: bool, session: Session, args, kwargs):
     if not session.is_active:
         session.begin(subtransactions=True)
 
@@ -30,7 +30,7 @@ def __run_required(self, func, read_only: bool, session: Session, args, kwargs):
     return result
 
 
-async def __async_run_requires_new(self, func, read_only: bool, session: AsyncSession, args, kwargs):
+async def __async_requires_new(self, func, read_only: bool, session: AsyncSession, args, kwargs):
     if not session.is_active:
         session.begin()
 
@@ -41,7 +41,7 @@ async def __async_run_requires_new(self, func, read_only: bool, session: AsyncSe
     return result
 
 
-def __run_requires_new(self, func, read_only: bool, session: Session, args, kwargs):
+def __sync_requires_new(self, func, read_only: bool, session: Session, args, kwargs):
     if not session.is_active:
         session.begin()
 
@@ -58,21 +58,21 @@ def async_transactional(read_only: bool = False, propagation: Propagation = Prop
             if hasattr(self, 'uow'):
                 async with self.uow:
                     if propagation == Propagation.REQUIRED:
-                        result = await __async_run_required(self=self, func=func, read_only=read_only,
-                                                            session=self.uow.session, args=args, kwargs=kwargs)
+                        result = await __async_propagation_required(self=self, func=func, read_only=read_only,
+                                                                    session=self.uow.session, args=args, kwargs=kwargs)
                     else:
-                        result = await __async_run_requires_new(self=self, func=func, read_only=read_only,
-                                                                session=self.uow.session, args=args, kwargs=kwargs)
+                        result = await __async_requires_new(self=self, func=func, read_only=read_only,
+                                                            session=self.uow.session, args=args, kwargs=kwargs)
 
                     return result
 
             elif hasattr(self, 'session'):
                 if propagation == Propagation.REQUIRED:
-                    result = await __async_run_required(self=self, func=func, read_only=read_only,
-                                                        session=self.session, args=args, kwargs=kwargs)
+                    result = await __async_propagation_required(self=self, func=func, read_only=read_only,
+                                                                session=self.session, args=args, kwargs=kwargs)
                 else:
-                    result = await __async_run_requires_new(self=self, func=func, read_only=read_only,
-                                                            session=self.session, args=args, kwargs=kwargs)
+                    result = await __async_requires_new(self=self, func=func, read_only=read_only,
+                                                        session=self.session, args=args, kwargs=kwargs)
 
                 return result
 
@@ -87,21 +87,21 @@ def sync_transactional(read_only: bool = False, propagation: Propagation = Propa
             if hasattr(self, 'uow'):
                 with self.uow:
                     if propagation == Propagation.REQUIRED:
-                        result = __run_required(self=self, func=func, read_only=read_only,
-                                                session=self.uow.session, args=args, kwargs=kwargs)
+                        result = __sync_propagation_required(self=self, func=func, read_only=read_only,
+                                                             session=self.uow.session, args=args, kwargs=kwargs)
                     else:
-                        result = __run_requires_new(self=self, func=func, read_only=read_only,
-                                                    session=self.uow.session, args=args, kwargs=kwargs)
+                        result = __sync_requires_new(self=self, func=func, read_only=read_only,
+                                                     session=self.uow.session, args=args, kwargs=kwargs)
 
                     return result
 
             elif hasattr(self, 'session'):
                 if propagation == Propagation.REQUIRED:
-                    result = __run_required(self=self, func=func, read_only=read_only,
-                                            session=self.session, args=args, kwargs=kwargs)
+                    result = __sync_propagation_required(self=self, func=func, read_only=read_only,
+                                                         session=self.session, args=args, kwargs=kwargs)
                 else:
-                    result = __run_requires_new(self=self, func=func, read_only=read_only,
-                                                session=self.session, args=args, kwargs=kwargs)
+                    result = __sync_requires_new(self=self, func=func, read_only=read_only,
+                                                 session=self.session, args=args, kwargs=kwargs)
 
                 return result
 
