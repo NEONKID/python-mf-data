@@ -12,7 +12,7 @@ _T = TypeVar("_T")                  # Primary key Type
 
 
 class AsyncRepository(Protocol[_MT, _T]):
-    _session: AsyncSession
+    session: AsyncSession
 
     @property
     def _model(self):
@@ -23,14 +23,14 @@ class AsyncRepository(Protocol[_MT, _T]):
         return inspect(self._model).primary_key[0].name
 
     async def delete(self, item: _MT):
-        await self._session.delete(item)
+        await self.session.delete(item)
 
     async def find_by_pk(self, pk: _T) -> Optional[_MT]:
         return await self.find_by_col(**{self._pk_column: pk})
 
     @final
     async def find_by_col(self, **kwargs) -> Optional[_MT]:
-        item = await self._session.execute(self._gen_stmt_for_param(**kwargs))
+        item = await self.session.execute(self._gen_stmt_for_param(**kwargs))
         return item.unique().scalars().one_or_none()
 
     @final
@@ -44,22 +44,22 @@ class AsyncRepository(Protocol[_MT, _T]):
     @final
     async def find_all(self, **kwargs) -> List[_MT]:
         stmt = self._gen_stmt_for_param(**kwargs)
-        result = await self._session.execute(stmt)
+        result = await self.session.execute(stmt)
 
         return result.unique().scalars().fetchall()
 
     @final
     async def is_exists(self, **kwargs) -> bool:
-        result = await self._session.execute(self._gen_stmt_for_param(**kwargs).exists().select())
+        result = await self.session.execute(self._gen_stmt_for_param(**kwargs).exists().select())
         return result.scalar()
 
     @final
     def create(self, item: _MT):
-        self._session.add(item)
+        self.session.add(item)
 
     @final
     async def create_all(self, items: List[_MT]):
-        self._session.add_all(items)
+        self.session.add_all(items)
 
     def update(self, item: _MT, req: dict):
         for k, v in req.items():
@@ -68,7 +68,7 @@ class AsyncRepository(Protocol[_MT, _T]):
 
 
 class SyncRepository(Protocol[_MT, _T]):
-    _session: Session
+    session: Session
 
     @property
     def _model(self):
@@ -83,7 +83,7 @@ class SyncRepository(Protocol[_MT, _T]):
         return self._gen_query_for_param(**kwargs).count()
 
     def delete(self, item: _MT):
-        self._session.delete(item)
+        self.session.delete(item)
 
     def find_by_pk(self, pk: _T) -> Optional[_MT]:
         return self.find_by_col(**{self._pk_column: pk})
@@ -95,7 +95,7 @@ class SyncRepository(Protocol[_MT, _T]):
 
     @final
     def _gen_query_for_param(self, **kwargs) -> Query:
-        query = self._session.query(self._model)
+        query = self.session.query(self._model)
         if kwargs:
             for key, value in kwargs.items():
                 query = query.filter(getattr(self._model, key) == value)
@@ -108,11 +108,11 @@ class SyncRepository(Protocol[_MT, _T]):
 
     @final
     def is_exists(self, **kwargs) -> bool:
-        return self._session.query(self._gen_query_for_param(**kwargs).exists()).scalar()
+        return self.session.query(self._gen_query_for_param(**kwargs).exists()).scalar()
 
     @final
     def create(self, item: Base):
-        self._session.add(item)
+        self.session.add(item)
 
     def update(self, item: _MT, req: dict):
         for k, v in req.items():

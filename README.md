@@ -1,12 +1,6 @@
 # Python Micro Framework Data
 
-Python Micro Framework Data makes database connections easier in microframeworks like [Falcon](https://falcon.readthedocs.io/en/stable/) and [FastAPI](https://fastapi.tiangolo.com/).
-
-This library is created with the motive of [Spring Data Commons](https://docs.spring.io/spring-data/commons/docs/current/reference/html/), and the relational database is implemented based on [SQLAlchemy](https://www.sqlalchemy.org/)
-
-
-
-Currently, this library is **still under development**. The only stable database, **SQLAlchemy**, is the relational database, and we plan to implement it so that it can be used separately according to synchronous and asynchronous processing.
+* [한국어](https://github.com/NEONKID/python-mf-data/blob/main/README.ko.md)
 
 
 
@@ -14,19 +8,13 @@ Currently, this library is **still under development**. The only stable database
 
 
 
-## How to install (rdb)
+Python Micro Framework Data makes database connections easier in microframeworks like [Falcon](https://falcon.readthedocs.io/en/stable/) and [FastAPI](https://fastapi.tiangolo.com/).
 
-pymfdata can use the extra option to specify which database to use. When using this library for relational database connection, use the command below.
+This library is created with the motive of [Spring Data Commons](https://docs.spring.io/spring-data/commons/docs/current/reference/html/), and the relational database is implemented based on [SQLAlchemy](https://www.sqlalchemy.org/)
 
-```python
-$ pip install pymfdata[rdb]
-```
 
-Or if you are using poetry, use the following command
 
-```python
-$ poetry add "pymfdata[rdb]"
-```
+Currently, this library is **still under development**. The only stable database, **SQLAlchemy**, is the relational database, and we plan to implement it so that it can be used separately according to synchronous and asynchronous processing.
 
 
 
@@ -164,3 +152,62 @@ When using the Repository protocol provided by pymfdata, the following basic met
 In addition to the methods provided by default in pymfdata, you can also create and use methods as in the code above. 
 
 Since the repository of ```pymfdata``` uses the Python [Protocol](https://www.python.org/dev/peps/pep-0544/#using-protocols), it can be used like a Java interface by implementing a separate Protocol.
+
+```python
+from pymfdata.rdb.repository import AsyncRepository, AsyncSession
+from typing import Optional
+
+
+class MemoRepository(AsyncRepository[MemoEntity, int]):
+    def __init__(self, session: Optional[AsyncSession]):
+        self.session = session
+        
+    @async_transactional(read_only=True)
+    async def find_by_title(title: str) -> MemoEntity:
+        # Todo: Implement the session code, but omit the session begin and commit code.
+```
+
+Additionally, it provides a way to reduce duplicated code in a session by using the ```transactional``` decorator. The ```transactional``` decorator is divided into asynchronous and synchronous, and must be used according to the implemented connection.
+
+
+
+<br />
+
+
+
+## Unit Of Work Example (rdb)
+
+SQLAlchemy uses the unit of work pattern by default, but if you want to define your own unit of work, you can use this library to define it.
+
+```python
+from sqlalchemy.engine import Engine
+from sqlalchemy.ext.asyncio import AsyncEngine
+
+from pymfdata.rdb.command import AsyncSQLAlchemyUnitOfWork, SyncSQLAlchemyUnitOfWork
+from pymfdata.rdb.transaction import async_transactional
+
+
+class AsyncMemoUseCaseUnitOfWork(AsyncSQLAlchemyUnitOfWork):
+    def __init__(self, engine: AsyncEngine) -> None:
+        super().__init__(engine)
+
+    async def __aenter__(self):
+        await super().__aenter__()
+
+        self.memo_repository: MemoRepository = MemoRepository(self.session)
+            
+
+class MemoUseCase:
+    def __init__(self, uow: AsyncMemoUseCaseUnitOfWork) -> None:
+        self.uow = uow
+
+    @async_transactional(read_only=True)
+    async def find_by_id(self, item_id: int):
+        return await self.uow.memo_repository.find_by_pk(item_id)
+```
+
+The unit of work pattern is also divided into asynchronous and synchronous classes, and it must be used according to the connection.
+
+The created unit of work class can be used in the class containing business logic, and we define them as **UseCase**. This class contains the business logic of the application.
+
+When using the unit of work pattern, use the transactional decorator on business logic methods to handle transaction processing.

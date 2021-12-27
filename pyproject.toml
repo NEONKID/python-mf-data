@@ -1,11 +1,16 @@
 [tool.poetry]
 name = "python-mf-data"
-version = "0.2.0"
+version = "0.2.1"
 description = "Python Micro Framework Data"
 authors = ["Neon K.I.D <contact@neonkid.xyz>"]
 packages = [
     { include = "pymfdata" }
 ]
+repository = "https://github.com/NEONKID/python-mf-data"
+readme = "README.md"
+
+[tool.poetry.build]
+generate-setup-file = false
 
 [tool.poetry.dependencies]
 python = "^3.8"
