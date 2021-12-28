@@ -22,7 +22,6 @@ class AsyncRepository(Protocol[_MT, _T]):
     def _pk_column(self) -> str:
         return inspect(self._model).primary_key[0].name
 
-    @final
     @property
     def session(self) -> AsyncSession:
         assert self._session is not None
@@ -84,7 +83,6 @@ class SyncRepository(Protocol[_MT, _T]):
     def _pk_column(self) -> str:
         return inspect(self._model).primary_key[0].name
 
-    @final
     @property
     def session(self) -> Session:
         assert self._session is not None
