@@ -1,6 +1,7 @@
 import pytest
 from pymfdata.rdb.connection import AsyncSQLAlchemy, SyncSQLAlchemy
 
+from tests.rdb.domain.dto import MemoRequest
 from tests.rdb.domain.entity import MemoEntity
 from tests.rdb.domain.usecase import AsyncMemoUseCaseUnitOfWork, MemoUseCaseUnitOfWork, MemoUseCase
 
@@ -37,3 +38,10 @@ class TestRdb:
     async def test_find_for_transactional(self):
         item = await self.uc.find_by_id(1)
         assert item is not None
+
+    @pytest.mark.asyncio
+    async def test_write_for_transactional(self):
+        req = MemoRequest(content="Practice Memo")
+
+        item = await self.uc.create_memo(req)
+        assert item.id is not None
