@@ -2,7 +2,7 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from pymfdata.common.usecase import BaseUseCase
-from pymfdata.rdb.command import AsyncSQLAlchemyUnitOfWork, SyncSQLAlchemyUnitOfWork
+from pymfdata.rdb.usecase import AsyncSQLAlchemyUnitOfWork, SyncSQLAlchemyUnitOfWork
 from pymfdata.rdb.transaction import async_transactional
 
 from tests.rdb.domain.dto import MemoRequest
