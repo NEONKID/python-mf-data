@@ -9,12 +9,23 @@ from pymfdata.common.usecase import AsyncBaseUnitOfWork, SyncBaseUnitOfWork
 class AsyncSQLAlchemyUnitOfWork(AsyncBaseUnitOfWork):
     def __init__(self, engine: AsyncEngine) -> None:
         self._engine = engine
-        self.session: Optional[AsyncSession] = None
+        self._session: Optional[AsyncSession] = None
+
+    @property
+    def engine(self) -> AsyncEngine:
+        assert self._engine is not None
+        return self._engine
+
+    @property
+    def session(self) -> AsyncSession:
+        assert self._session is not None
+        return self._session
 
     async def __aenter__(self):
-        self.session = AsyncSession(self._engine)
+        self._session = AsyncSession(self.engine)
 
     async def __aexit__(self, exc_type: Optional[Type[Exception]], exc_val: Optional[Exception], traceback):
+        await super().__aexit__(exc_type, exc_val, traceback)
         await self.session.close()
 
     async def commit(self):
@@ -32,13 +43,24 @@ class AsyncSQLAlchemyUnitOfWork(AsyncBaseUnitOfWork):
 
 class SyncSQLAlchemyUnitOfWork(SyncBaseUnitOfWork):
     def __init__(self, engine: Engine) -> None:
-        self.engine = engine
-        self.session: Optional[Session] = None
+        self._engine = engine
+        self._session: Optional[Session] = None
+
+    @property
+    def engine(self) -> Engine:
+        assert self._engine is not None
+        return self._engine
+
+    @property
+    def session(self) -> Session:
+        assert self._session is not None
+        return self._session
 
     def __enter__(self):
-        self.session = Session(self.engine)
+        self._session = Session(self.engine)
 
     def __exit__(self, exc_type: Optional[Type[Exception]], exc_val: Optional[Exception], traceback):
+        super().__exit__(exc_type, exc_val, traceback)
         self.session.close()
 
     def commit(self):
