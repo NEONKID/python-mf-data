@@ -1,6 +1,7 @@
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import AsyncEngine
 
+from pymfdata.common.usecase import BaseUseCase
 from pymfdata.rdb.command import AsyncSQLAlchemyUnitOfWork, SyncSQLAlchemyUnitOfWork
 from pymfdata.rdb.transaction import async_transactional
 
@@ -28,9 +29,9 @@ class MemoUseCaseUnitOfWork(SyncSQLAlchemyUnitOfWork):
         self.memo_repository: SyncMemoRepository = SyncMemoRepository(self.session)
 
 
-class MemoUseCase:
+class MemoUseCase(BaseUseCase):
     def __init__(self, uow: AsyncMemoUseCaseUnitOfWork) -> None:
-        self.uow = uow
+        self._uow = uow
 
     @async_transactional(read_only=True)
     async def find_by_id(self, item_id: int):
