@@ -12,7 +12,7 @@ _T = TypeVar("_T")                  # Primary key Type
 
 
 class AsyncRepository(Protocol[_MT, _T]):
-    session: AsyncSession
+    _session: AsyncSession
 
     @property
     def _model(self):
@@ -21,6 +21,12 @@ class AsyncRepository(Protocol[_MT, _T]):
     @property
     def _pk_column(self) -> str:
         return inspect(self._model).primary_key[0].name
+
+    @final
+    @property
+    def session(self) -> AsyncSession:
+        assert self._session is not None
+        return self._session
 
     async def delete(self, item: _MT):
         await self.session.delete(item)
@@ -68,7 +74,7 @@ class AsyncRepository(Protocol[_MT, _T]):
 
 
 class SyncRepository(Protocol[_MT, _T]):
-    session: Session
+    _session: Session
 
     @property
     def _model(self):
@@ -77,6 +83,12 @@ class SyncRepository(Protocol[_MT, _T]):
     @property
     def _pk_column(self) -> str:
         return inspect(self._model).primary_key[0].name
+
+    @final
+    @property
+    def session(self) -> Session:
+        assert self._session is not None
+        return self._session
 
     @final
     def count(self, **kwargs) -> int:

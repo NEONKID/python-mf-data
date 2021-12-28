@@ -6,9 +6,9 @@ from tests.rdb.domain.entity import MemoEntity
 
 class AsyncMemoRepository(AsyncRepository[MemoEntity, int]):
     def __init__(self, session: Optional[AsyncSession]) -> None:
-        self.session = session
+        self._session = session
 
 
 class SyncMemoRepository(SyncRepository[MemoEntity, int]):
     def __init__(self, session: Optional[Session]) -> None:
-        self.session = session
+        self._session = session
