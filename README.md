@@ -203,7 +203,7 @@ SQLAlchemy uses the unit of work pattern by default, but if you want to define y
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from pymfdata.rdb.command import AsyncSQLAlchemyUnitOfWork, SyncSQLAlchemyUnitOfWork
+from pymfdata.rdb.usecase import AsyncSQLAlchemyUnitOfWork, SyncSQLAlchemyUnitOfWork
 from pymfdata.rdb.transaction import async_transactional
 
 
@@ -215,7 +215,7 @@ class AsyncMemoUseCaseUnitOfWork(AsyncSQLAlchemyUnitOfWork):
         await super().__aenter__()
 
         self.memo_repository: MemoRepository = MemoRepository(self.session)
-            
+
 
 class MemoUseCase:
     def __init__(self, uow: AsyncMemoUseCaseUnitOfWork) -> None:
