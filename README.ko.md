@@ -202,7 +202,7 @@ SQLAlchemy에서 기본적으로 제공하는 작업 단위 패턴 외에 직접
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from pymfdata.rdb.command import AsyncSQLAlchemyUnitOfWork, SyncSQLAlchemyUnitOfWork
+from pymfdata.rdb.usecase import AsyncSQLAlchemyUnitOfWork, SyncSQLAlchemyUnitOfWork
 from pymfdata.rdb.transaction import async_transactional
 
 
@@ -214,7 +214,7 @@ class AsyncMemoUseCaseUnitOfWork(AsyncSQLAlchemyUnitOfWork):
         await super().__aenter__()
 
         self.memo_repository: MemoRepository = MemoRepository(self.session)
-            
+
 
 class MemoUseCase:
     def __init__(self, uow: AsyncMemoUseCaseUnitOfWork) -> None:
