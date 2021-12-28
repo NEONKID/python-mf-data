@@ -177,7 +177,7 @@ from typing import Optional
 
 class MemoRepository(AsyncRepository[MemoEntity, int]):
     def __init__(self, session: Optional[AsyncSession]):
-        self.session = session
+        self._session = session
         
     @async_transactional(read_only=True)
     async def find_by_title(title: str) -> MemoEntity:
@@ -202,6 +202,7 @@ SQLAlchemy에서 기본적으로 제공하는 작업 단위 패턴 외에 직접
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import AsyncEngine
 
+from pymfdata.common.usecase import BaseUseCase
 from pymfdata.rdb.usecase import AsyncSQLAlchemyUnitOfWork, SyncSQLAlchemyUnitOfWork
 from pymfdata.rdb.transaction import async_transactional
 
@@ -216,9 +217,9 @@ class AsyncMemoUseCaseUnitOfWork(AsyncSQLAlchemyUnitOfWork):
         self.memo_repository: MemoRepository = MemoRepository(self.session)
 
 
-class MemoUseCase:
+class MemoUseCase(BaseUseCase):
     def __init__(self, uow: AsyncMemoUseCaseUnitOfWork) -> None:
-        self.uow = uow
+        self._uow = uow
 
     @async_transactional(read_only=True)
     async def find_by_id(self, item_id: int):
@@ -228,3 +229,5 @@ class MemoUseCase:
 작업 단위 패턴 또한 비동기, 동기에 따라 클래스가 별도로 구현되어 있습니다. 생성한 커넥션에 맞춰 사용하시면 됩니다.
 
 이렇게 만들어진 작업 단위 클래스는 애플리케이션의 비즈니스 로직을 정의할 ***UseCase*** 클래스에 담아 사용할 수 있습니다. 사실상 비즈니스 로직에서 트랜잭션이 필요로 하는 경우의 코드이기 때문에 작업 단위 패턴에 있는 메서드에 ```transactional``` 데코레이터를 사용하여 트랜잭션을 처리할 수 있습니다.
+
+(```transactional``` 데코레이터를 사용하는 경우, pymfdata에서 제공하는 ```BaseUseCase``` 클래스를 상속하여 사용해주십시오)

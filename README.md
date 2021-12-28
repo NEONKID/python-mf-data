@@ -175,12 +175,13 @@ Since the repository of ```pymfdata``` uses the Python [Protocol](https://www.py
 
 ```python
 from pymfdata.rdb.repository import AsyncRepository, AsyncSession
+from pymfdata.rdb.transaction import async_transactional
 from typing import Optional
 
 
 class MemoRepository(AsyncRepository[MemoEntity, int]):
     def __init__(self, session: Optional[AsyncSession]):
-        self.session = session
+        self._session = session
         
     @async_transactional(read_only=True)
     async def find_by_title(title: str) -> MemoEntity:
@@ -203,6 +204,7 @@ SQLAlchemy uses the unit of work pattern by default, but if you want to define y
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import AsyncEngine
 
+from pymfdata.common.usecase import BaseUseCase
 from pymfdata.rdb.usecase import AsyncSQLAlchemyUnitOfWork, SyncSQLAlchemyUnitOfWork
 from pymfdata.rdb.transaction import async_transactional
 
@@ -217,9 +219,9 @@ class AsyncMemoUseCaseUnitOfWork(AsyncSQLAlchemyUnitOfWork):
         self.memo_repository: MemoRepository = MemoRepository(self.session)
 
 
-class MemoUseCase:
+class MemoUseCase(BaseUseCase):
     def __init__(self, uow: AsyncMemoUseCaseUnitOfWork) -> None:
-        self.uow = uow
+        self._uow = uow
 
     @async_transactional(read_only=True)
     async def find_by_id(self, item_id: int):
@@ -231,3 +233,5 @@ The unit of work pattern is also divided into asynchronous and synchronous class
 The created unit of work class can be used in the class containing business logic, and we define them as **UseCase**. This class contains the business logic of the application.
 
 When using the unit of work pattern, use the transactional decorator on business logic methods to handle transaction processing.
+
+(If you are using ```transactional``` decorators, please use the ```BaseUseCase``` class provided by pymfdata.)
