@@ -1,5 +1,6 @@
 import enum
 
+from pymfdata.rdb.connection import Base
 from pymfdata.rdb.usecase import AsyncSession, Session
 
 
@@ -15,6 +16,8 @@ async def __async_propagation_required(self, func, read_only: bool, session: Asy
     result = await func(self, *args, **kwargs)
     if not read_only:
         await session.commit()
+        if isinstance(result, Base):
+            await session.refresh(result)
 
     return result
 
@@ -37,6 +40,8 @@ async def __async_requires_new(self, func, read_only: bool, session: AsyncSessio
     result = await func(self, *args, **kwargs)
     if not read_only:
         await session.commit()
+        if isinstance(result, Base):
+            await session.refresh(result)
 
     return result
 
