@@ -1,6 +1,6 @@
 import enum
 
-from pymfdata.rdb.command import AsyncSession, Session
+from pymfdata.rdb.usecase import AsyncSession, Session
 
 
 class Propagation(enum.Enum):
