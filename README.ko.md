@@ -231,3 +231,16 @@ class MemoUseCase(BaseUseCase):
 이렇게 만들어진 작업 단위 클래스는 애플리케이션의 비즈니스 로직을 정의할 ***UseCase*** 클래스에 담아 사용할 수 있습니다. 사실상 비즈니스 로직에서 트랜잭션이 필요로 하는 경우의 코드이기 때문에 작업 단위 패턴에 있는 메서드에 ```transactional``` 데코레이터를 사용하여 트랜잭션을 처리할 수 있습니다.
 
 (```transactional``` 데코레이터를 사용하는 경우, pymfdata에서 제공하는 ```BaseUseCase``` 클래스를 상속하여 사용해주십시오)
+
+
+
+<br />
+
+
+
+## FastAPI Example
+
+FastAPI에서 pymfdata를 이용한 더 자세한 예시가 필요한 경우 아래 소스를 참고해보십시오.
+
+https://github.com/NEONKID/python-mf-data-example
+

@@ -6,6 +6,7 @@ from pymfdata.rdb.usecase import AsyncSQLAlchemyUnitOfWork, SyncSQLAlchemyUnitOf
 from pymfdata.rdb.transaction import async_transactional
 
 from tests.rdb.domain.dto import MemoRequest
+from tests.rdb.domain.entity import MemoEntity
 from tests.rdb.domain.repository import AsyncMemoRepository, SyncMemoRepository
 
 
@@ -36,3 +37,10 @@ class MemoUseCase(BaseUseCase):
     @async_transactional(read_only=True)
     async def find_by_id(self, item_id: int):
         return await self.uow.memo_repository.find_by_pk(item_id)
+
+    @async_transactional()
+    async def create_memo(self, req: MemoRequest):
+        entity = MemoEntity(**req.dict())
+
+        self.uow.memo_repository.create(entity)
+        return entity

@@ -235,3 +235,16 @@ The created unit of work class can be used in the class containing business logi
 When using the unit of work pattern, use the transactional decorator on business logic methods to handle transaction processing.
 
 (If you are using ```transactional``` decorators, please use the ```BaseUseCase``` class provided by pymfdata.)
+
+
+
+<br />
+
+
+
+## FastAPI Example
+
+If you want to actively use pymfdata in FastAPI, please refer to this example.
+
+https://github.com/NEONKID/python-mf-data-example
+
