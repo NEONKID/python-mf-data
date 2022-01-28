@@ -6,7 +6,7 @@ from tests.rdb.domain.entity import MemoEntity
 from tests.rdb.domain.usecase import AsyncMemoUseCaseUnitOfWork, MemoUseCaseUnitOfWork, MemoUseCase
 
 
-class TestRdb:
+class TestRdbCommand:
     @pytest.fixture(autouse=True)
     def setup(self, test_db_connection: SyncSQLAlchemy, test_async_db_connection: AsyncSQLAlchemy) -> None:
         self.sync_uow = MemoUseCaseUnitOfWork(test_db_connection._engine)

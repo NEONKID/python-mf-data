@@ -7,7 +7,8 @@ from pymfdata.rdb.transaction import async_transactional
 
 from tests.rdb.domain.dto import MemoRequest
 from tests.rdb.domain.entity import MemoEntity
-from tests.rdb.domain.repository import AsyncMemoRepository, SyncMemoRepository
+from tests.rdb.domain.repository import (AsyncMemoRepository, AsyncMemoQueryRepository,
+                                         SyncMemoRepository, SyncMemoQueryRepository)
 
 
 class AsyncMemoUseCaseUnitOfWork(AsyncSQLAlchemyUnitOfWork):
@@ -18,6 +19,7 @@ class AsyncMemoUseCaseUnitOfWork(AsyncSQLAlchemyUnitOfWork):
         await super().__aenter__()
 
         self.memo_repository: AsyncMemoRepository = AsyncMemoRepository(self.session)
+        self.query_repository: AsyncMemoQueryRepository = AsyncMemoQueryRepository(self.session)
 
 
 class MemoUseCaseUnitOfWork(SyncSQLAlchemyUnitOfWork):
@@ -28,9 +30,10 @@ class MemoUseCaseUnitOfWork(SyncSQLAlchemyUnitOfWork):
         super().__enter__()
 
         self.memo_repository: SyncMemoRepository = SyncMemoRepository(self.session)
+        self.query_repository: SyncMemoQueryRepository = SyncMemoQueryRepository(self.session)
 
 
-class MemoUseCase(BaseUseCase):
+class MemoUseCase(BaseUseCase[AsyncMemoUseCaseUnitOfWork]):
     def __init__(self, uow: AsyncMemoUseCaseUnitOfWork) -> None:
         self._uow = uow
 

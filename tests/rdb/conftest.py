@@ -1,7 +1,10 @@
 import pytest
 
-from pymfdata.rdb.connection import AsyncSQLAlchemy, Base, SyncSQLAlchemy
+from pymfdata.rdb.mapper import Base, mapper_registry
+from pymfdata.rdb.connection import AsyncSQLAlchemy, SyncSQLAlchemy
 from tests import event_loop
+from tests.rdb.domain.entity import MemoEntity
+from tests.rdb.domain.query_model import MemoQuery
 
 
 async_db = AsyncSQLAlchemy(db_uri='postgresql+asyncpg://{}:{}@{}:{}/{}'.format(
@@ -9,6 +12,8 @@ async_db = AsyncSQLAlchemy(db_uri='postgresql+asyncpg://{}:{}@{}:{}/{}'.format(
 
 sync_db = SyncSQLAlchemy(db_uri='postgresql+psycopg2://{}:{}@{}:{}/{}'.format(
     'postgres', 'postgres', '127.0.0.1', '5432', 'test'))
+
+mapper_registry.map_imperatively(MemoQuery, MemoEntity.__table__)
 
 
 @pytest.fixture(scope="session")
