@@ -1,4 +1,4 @@
-from pymfdata.rdb.connection import Base
+from pymfdata.rdb.mapper import Base
 from sqlalchemy import BigInteger, Column, String
 from typing import Union
 
