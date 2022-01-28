@@ -5,15 +5,22 @@ from sqlalchemy.inspection import inspect
 from sqlalchemy.orm import Session, Query
 from sqlalchemy.sql.selectable import Select
 
-from pymfdata.rdb.connection import Base
+from pymfdata.rdb.mapper import Base
 
 _MT = TypeVar("_MT", bound=Base)    # Model Type
 _T = TypeVar("_T")                  # Primary key Type
 
 
-class AsyncRepository(Protocol[_MT, _T]):
+class BaseAsyncRepository(Protocol):
     _session: AsyncSession
 
+    @property
+    def session(self) -> AsyncSession:
+        assert self._session is not None
+        return self._session
+
+
+class AsyncRepository(BaseAsyncRepository, Protocol[_MT, _T]):
     @property
     def _model(self):
         return get_args(self.__orig_bases__[0])[0]
@@ -21,11 +28,6 @@ class AsyncRepository(Protocol[_MT, _T]):
     @property
     def _pk_column(self) -> str:
         return inspect(self._model).primary_key[0].name
-
-    @property
-    def session(self) -> AsyncSession:
-        assert self._session is not None
-        return self._session
 
     async def delete(self, item: _MT):
         await self.session.delete(item)
@@ -72,8 +74,16 @@ class AsyncRepository(Protocol[_MT, _T]):
                 setattr(item, k, v)
 
 
-class SyncRepository(Protocol[_MT, _T]):
+class BaseSyncRepository(Protocol):
     _session: Session
+
+    @property
+    def session(self) -> Session:
+        assert self._session is not None
+        return self._session
+
+
+class SyncRepository(BaseSyncRepository, Protocol[_MT, _T]):
 
     @property
     def _model(self):
@@ -82,11 +92,6 @@ class SyncRepository(Protocol[_MT, _T]):
     @property
     def _pk_column(self) -> str:
         return inspect(self._model).primary_key[0].name
-
-    @property
-    def session(self) -> Session:
-        assert self._session is not None
-        return self._session
 
     @final
     def count(self, **kwargs) -> int:

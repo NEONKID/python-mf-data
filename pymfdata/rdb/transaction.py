@@ -1,6 +1,6 @@
 import enum
 
-from pymfdata.rdb.connection import Base
+from pymfdata.rdb.mapper import Base
 from pymfdata.rdb.usecase import AsyncSession, Session
 
 

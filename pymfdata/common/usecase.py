@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import final, Optional, Protocol, Type, Union
+from typing import final, Optional, Protocol, Type, TypeVar, Union
 
 
 class AsyncBaseUnitOfWork(ABC):
@@ -38,10 +38,13 @@ class SyncBaseUnitOfWork(ABC):
         raise NotImplementedError("Choice ORM rollback func")
 
 
-class BaseUseCase(Protocol):
-    _uow: Union[AsyncBaseUnitOfWork, SyncBaseUnitOfWork]
+_UT = TypeVar("_UT", bound=Union[AsyncBaseUnitOfWork, SyncBaseUnitOfWork])
+
+
+class BaseUseCase(Protocol[_UT]):
+    _uow: _UT
 
     @property
-    def uow(self):
+    def uow(self) -> _UT:
         assert self._uow is not None
         return self._uow
