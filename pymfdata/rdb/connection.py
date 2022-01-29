@@ -6,6 +6,8 @@ from sqlalchemy.engine import Engine, create_engine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_scoped_session, create_async_engine
 from sqlalchemy.orm import sessionmaker, Session, scoped_session
 
+from pymfdata.rdb.mapper import Base
+
 
 class AsyncSQLAlchemy:
     def __init__(self, db_uri: str) -> None:
