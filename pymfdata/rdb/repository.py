@@ -1,4 +1,4 @@
-from typing import final, Iterator, get_args, List, Protocol, Optional, TypeVar
+from typing import final, get_args, List, Protocol, Optional, TypeVar
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.inspection import inspect
@@ -72,6 +72,13 @@ class AsyncRepository(BaseAsyncRepository, Protocol[_MT, _T]):
         for k, v in req.items():
             if v is not None:
                 setattr(item, k, v)
+
+    def update_from_entity(self, item: _MT, target: _MT):
+        mapper = inspect(self._model)
+        attrs = mapper.attrs
+
+        for k in attrs.keys():
+            setattr(item, k, getattr(target, k))
 
 
 class BaseSyncRepository(Protocol):
