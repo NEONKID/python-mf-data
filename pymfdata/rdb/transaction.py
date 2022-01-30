@@ -1,7 +1,8 @@
 import enum
 
-from pymfdata.rdb.mapper import Base
 from pymfdata.rdb.usecase import AsyncSession, Session
+from sqlalchemy import inspect
+from sqlalchemy.exc import NoInspectionAvailable
 
 
 class Propagation(enum.Enum):
@@ -16,8 +17,11 @@ async def __async_propagation_required(self, func, read_only: bool, session: Asy
     result = await func(self, *args, **kwargs)
     if not read_only:
         await session.commit()
-        if isinstance(result, Base):
+        try:
+            inspect(result)
             await session.refresh(result)
+        except NoInspectionAvailable:
+            pass
 
     return result
 
@@ -40,8 +44,11 @@ async def __async_requires_new(self, func, read_only: bool, session: AsyncSessio
     result = await func(self, *args, **kwargs)
     if not read_only:
         await session.commit()
-        if isinstance(result, Base):
+        try:
+            inspect(result)
             await session.refresh(result)
+        except NoInspectionAvailable:
+            pass
 
     return result
 
