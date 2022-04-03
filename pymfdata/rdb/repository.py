@@ -84,7 +84,6 @@ class BaseSyncRepository(Protocol):
 
 
 class SyncRepository(BaseSyncRepository, Protocol[_MT, _T]):
-
     @property
     def _model(self):
         return get_args(self.__orig_bases__[0])[0]
