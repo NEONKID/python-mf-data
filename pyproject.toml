@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "python-mf-data"
-version = "0.2.5"
+version = "0.2.6"
 description = "Python Micro Framework Data"
 authors = ["Neon K.I.D <contact@neonkid.xyz>"]
 packages = [

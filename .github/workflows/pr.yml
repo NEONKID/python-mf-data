@@ -74,4 +74,4 @@ jobs:
         uses: AveryCameronUofR/add-reviewer-gh-action@1.0.3
         with:
           reviewers: "NEONKID"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.ACTIONS_TOKEN }}
